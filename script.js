@@ -1,4 +1,4 @@
-const photos = [
+const samplePhotos = [
   {
     title: "Late Crossing",
     location: "Tokyo",
@@ -112,6 +112,8 @@ const photos = [
     alt: "Snowy mountains and open winter terrain."
   }
 ];
+
+const photos = Array.isArray(window.photos) && window.photos.length ? window.photos : samplePhotos;
 
 const featuredGrid = document.querySelector("[data-featured-grid]");
 const portfolioGrid = document.querySelector("[data-portfolio-grid]");
