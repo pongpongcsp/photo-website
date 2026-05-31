@@ -4,7 +4,7 @@ const path = require("path");
 const root = __dirname;
 const imagesDir = path.join(root, "images");
 const outputFile = path.join(root, "photos-data.js");
-const categories = new Set(["Street", "Travel", "Portrait", "Landscape"]);
+const categories = new Set(["峮峮"]);
 const imageExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
 
 function walk(dir) {
@@ -112,4 +112,4 @@ const contents = `window.photos = ${JSON.stringify(photos, null, 2)};\n`;
 fs.writeFileSync(outputFile, contents);
 
 console.log(`Generated ${photos.length} photos in photos-data.js`);
-console.log("Put photos into images/Street, images/Travel, images/Portrait, or images/Landscape to categorize them.");
+console.log("Put photos into images/峮峮 to categorize them.");
