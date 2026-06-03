@@ -4,7 +4,6 @@ const path = require("path");
 const root = __dirname;
 const imagesDir = path.join(root, "images");
 const outputFile = path.join(root, "photos-data.js");
-const categories = new Set(["峮峮"]);
 const imageExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
 
 function walk(dir) {
@@ -42,8 +41,8 @@ function titleFromFilename(filename, index) {
 }
 
 function categoryFromPath(filePath) {
-  const parent = path.basename(path.dirname(filePath));
-  return categories.has(parent) ? parent : "Street";
+  const relativeParts = path.relative(imagesDir, filePath).split(path.sep);
+  return relativeParts.length > 1 ? relativeParts[0] : "Uncategorized";
 }
 
 function readImageSize(filePath) {
@@ -94,22 +93,23 @@ const photos = files.map((filePath, index) => {
   const stats = fs.statSync(filePath);
   const category = categoryFromPath(filePath);
   const title = titleFromFilename(filePath, index);
-  const year = String(stats.mtime.getFullYear());
+  const image = webPath(filePath);
 
   return {
+    image,
     title,
     location: "Add location",
-    year,
+    year: String(stats.mtime.getFullYear()),
     category,
-    featured: index < 4,
+    featured: index < 12,
     ratio: ratioFor(filePath),
-    src: webPath(filePath),
     alt: `${title} - ${category} photograph.`
   };
 });
 
 const contents = `window.photos = ${JSON.stringify(photos, null, 2)};\n`;
-fs.writeFileSync(outputFile, contents);
+fs.writeFileSync(outputFile, contents, "utf8");
 
+const categoryNames = [...new Set(photos.map((photo) => photo.category))];
 console.log(`Generated ${photos.length} photos in photos-data.js`);
-console.log("Put photos into images/峮峮 to categorize them.");
+console.log(`Categories: ${categoryNames.join(", ") || "none"}`);

@@ -1,4 +1,4 @@
-const works = [
+const defaultWorks = [
   {
     image: "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1300&q=80",
     title: "Late Crossing",
@@ -121,7 +121,18 @@ const works = [
   }
 ];
 
-const categories = ["All", "Street", "Travel", "Portrait", "Landscape"];
+const generatedWorks = Array.isArray(window.photos) ? window.photos : [];
+const works = (generatedWorks.length ? generatedWorks : defaultWorks).map((work, index) => ({
+  image: work.image || work.src,
+  title: work.title || `Photo ${String(index + 1).padStart(2, "0")}`,
+  location: work.location || "",
+  year: work.year || "",
+  category: work.category || "Uncategorized",
+  alt: work.alt || work.title || `Photo ${String(index + 1).padStart(2, "0")}`,
+  featured: Boolean(work.featured),
+  ratio: work.ratio || "4 / 5"
+}));
+const categories = ["All", ...new Set(works.map((work) => work.category).filter(Boolean))];
 const featuredGrid = document.querySelector("[data-featured-grid]");
 const archiveGrid = document.querySelector("[data-archive-grid]");
 const filters = document.querySelector("[data-filters]");
