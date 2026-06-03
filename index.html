@@ -3,113 +3,115 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Quiet Frame | Photography Portfolio</title>
-    <meta name="description" content="A minimalist photography portfolio showcasing street, travel, portrait, and landscape work.">
-    <meta property="og:title" content="Quiet Frame | Photography Portfolio">
-    <meta property="og:description" content="A refined photography portfolio for featured works, categorized galleries, about, and contact.">
+    <title>Quiet Frame | Minimal Photography Portfolio</title>
+    <meta name="description" content="Quiet Frame is a minimal monochrome photography portfolio featuring street, travel, portrait, and landscape work.">
+    <meta property="og:title" content="Quiet Frame | Minimal Photography Portfolio">
+    <meta property="og:description" content="Quiet observations of cities, light, and distance.">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80">
     <meta property="og:url" content="https://example.com">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1200&q=80">
     <link rel="preconnect" href="https://images.unsplash.com">
-    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
     <header class="site-header" data-header>
-      <a class="brand" href="#home" aria-label="Quiet Frame home">Quiet Frame</a>
-      <nav class="main-nav" aria-label="Primary navigation">
-        <a href="#featured">Featured</a>
-        <a href="#portfolio">Portfolio</a>
+      <a class="brand" href="#top" aria-label="Quiet Frame home">Quiet Frame</a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#work">Work</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
+        <a href="https://instagram.com/yourname" target="_blank" rel="noreferrer">Instagram</a>
       </nav>
-      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle dark mode" title="Toggle dark mode">
-        <span class="theme-icon" aria-hidden="true"></span>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle dark mode">
+        <span data-theme-label>Dark</span>
       </button>
     </header>
 
-    <main id="home">
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-media" aria-hidden="true"></div>
-        <div class="hero-content">
-          <p class="kicker">Photography Portfolio</p>
-          <h1 id="hero-title">Still moments, quietly observed.</h1>
-          <p class="hero-copy">A curated archive of street, travel, portrait, and landscape photography.</p>
-          <a class="text-link" href="#featured">View selected works</a>
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Photography Portfolio</p>
+          <h1 id="hero-title">Quiet observations of cities, light, and distance.</h1>
         </div>
+        <figure class="hero-image">
+          <img
+            src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1600&q=82"
+            alt="A quiet night street scene with soft city light."
+            loading="eager"
+          >
+          <figcaption>Selected frame / Tokyo / 2025</figcaption>
+        </figure>
       </section>
 
-      <section class="section" id="featured" aria-labelledby="featured-title">
+      <section class="section" id="work" aria-labelledby="featured-title">
         <div class="section-heading">
-          <p class="kicker">Selected</p>
-          <h2 id="featured-title">Featured Works</h2>
+          <p class="eyebrow">Selected Works</p>
+          <h2 id="featured-title">Featured</h2>
         </div>
-        <div class="photo-grid featured-grid" data-featured-grid></div>
+        <div class="featured-grid" data-featured-grid></div>
       </section>
 
-      <section class="section" id="portfolio" aria-labelledby="portfolio-title">
-        <div class="section-heading split-heading">
+      <section class="section archive-section" aria-labelledby="archive-title">
+        <div class="section-heading archive-heading">
           <div>
-            <p class="kicker">Archive</p>
-            <h2 id="portfolio-title">Portfolio</h2>
+            <p class="eyebrow">Portfolio / Archive</p>
+            <h2 id="archive-title">Index</h2>
           </div>
-          <div class="filter-bar" role="tablist" aria-label="Portfolio categories" data-filter-bar>
-            <button class="filter-button is-active" type="button" data-category="All" role="tab" aria-selected="true">All</button>
-            <button class="filter-button" type="button" data-category="Street" role="tab" aria-selected="false">Street</button>
-            <button class="filter-button" type="button" data-category="Travel" role="tab" aria-selected="false">Travel</button>
-            <button class="filter-button" type="button" data-category="Portrait" role="tab" aria-selected="false">Portrait</button>
-            <button class="filter-button" type="button" data-category="Landscape" role="tab" aria-selected="false">Landscape</button>
-          </div>
+          <div class="filters" role="tablist" aria-label="Filter works by category" data-filters></div>
         </div>
-        <div class="masonry-grid" data-portfolio-grid></div>
+        <div class="archive-grid" data-archive-grid></div>
       </section>
 
-      <section class="section about-section" id="about" aria-labelledby="about-title">
+      <section class="section about" id="about" aria-labelledby="about-title">
         <div class="section-heading">
-          <p class="kicker">About</p>
-          <h2 id="about-title">A slower way of seeing.</h2>
+          <p class="eyebrow">About</p>
+          <h2 id="about-title">A photographer working between streets, faces, and weather.</h2>
         </div>
-        <div class="about-body">
+        <div class="about-text">
           <p>
-            Quiet Frame is a minimal photography portfolio template for presenting personal projects, commissions,
-            and visual essays with generous spacing and restrained typography.
+            Based in Taipei, I make quiet photographic studies of cities, light, distance,
+            and the small pauses that happen between movement.
           </p>
           <p>
-            Replace this copy with your own biography, artistic statement, client background, or exhibition notes.
-            The layout is intentionally simple so the images stay in front.
+            This portfolio is arranged as a restrained visual archive: minimal text,
+            careful spacing, and images given enough room to hold attention.
           </p>
         </div>
       </section>
 
-      <section class="section contact-section" id="contact" aria-labelledby="contact-title">
-        <div class="section-heading">
-          <p class="kicker">Contact</p>
-          <h2 id="contact-title">For commissions, prints, and collaborations.</h2>
+      <section class="section contact" id="contact" aria-labelledby="contact-title">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2 id="contact-title">Prints, commissions, and collaborations.</h2>
         </div>
-        <div class="contact-actions">
-          <a class="button-link" href="mailto:hello@example.com">hello@example.com</a>
-          <a class="button-link ghost" href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
-        </div>
+        <address class="contact-links">
+          <a href="mailto:hello@example.com">hello@example.com</a>
+          <a href="https://instagram.com/yourname" target="_blank" rel="noreferrer">@yourname</a>
+          <a href="https://wa.me/000000000000" target="_blank" rel="noreferrer">WhatsApp</a>
+        </address>
       </section>
     </main>
 
     <footer class="site-footer">
       <p>&copy; <span data-year></span> Quiet Frame</p>
-      <div class="footer-links">
-        <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+      <div>
         <a href="mailto:hello@example.com">Email</a>
+        <a href="https://instagram.com/yourname" target="_blank" rel="noreferrer">Instagram</a>
       </div>
     </footer>
 
-    <div class="lightbox" data-lightbox aria-hidden="true" role="dialog" aria-label="Image viewer">
-      <button class="lightbox-close" type="button" data-lightbox-close aria-label="Close image viewer">&times;</button>
-      <figure class="lightbox-figure">
+    <div class="lightbox" data-lightbox aria-hidden="true" role="dialog" aria-modal="true" aria-label="Image viewer">
+      <button class="lightbox-close" type="button" data-lightbox-close aria-label="Close viewer">&times;</button>
+      <button class="lightbox-nav lightbox-prev" type="button" data-lightbox-prev aria-label="Previous image">Prev</button>
+      <figure class="lightbox-frame">
         <img data-lightbox-image alt="">
         <figcaption data-lightbox-caption></figcaption>
       </figure>
+      <button class="lightbox-nav lightbox-next" type="button" data-lightbox-next aria-label="Next image">Next</button>
     </div>
 
-    <script src="photos-data.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
