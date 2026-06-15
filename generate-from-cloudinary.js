@@ -55,6 +55,11 @@ function categoryFromPublicId(publicId) {
 
 function buildPhotos(resources) {
   // Sort by public_id (folder/filename) for consistent ordering
+  // Exclude photos not in a named folder (e.g. Cloudinary default samples)
+  resources = resources.filter(r => {
+    const parts = r.public_id.split("/");
+    return parts.length > 1;
+  });
   resources.sort((a, b) => a.public_id.localeCompare(b.public_id));
 
   // First pass: count per category for numbered titles
