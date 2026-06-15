@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Cloudinary upload logs
+upload-log.json
+upload-output.log
+
+# Photo processing tools (local workflow)
+tools/
+culling/
+culling-test/
+compress-photos.bat
+compress_jpg_folder.py
+cull-photos.bat
+
+# Local images (hosted on Cloudinary)
+images/
+
+# OS files
+.DS_Store
+Thumbs.db

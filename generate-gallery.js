@@ -6,6 +6,10 @@ const imagesDir = path.join(root, "images");
 const outputFile = path.join(root, "photos-data.js");
 const imageExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
 
+// ─── Cloudinary config ────────────────────────────────────
+const CLOUD_NAME = "dxrm5ptbz";
+const BASE_URL = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/v1`;
+
 function walk(dir) {
   if (!fs.existsSync(dir)) return [];
 
@@ -18,12 +22,13 @@ function walk(dir) {
   });
 }
 
-function webPath(filePath) {
-  return path
-    .relative(root, filePath)
-    .split(path.sep)
-    .map(encodeURIComponent)
-    .join("/");
+/** Build Cloudinary URL from local file path */
+function cloudinaryUrl(filePath) {
+  const relative = path.relative(imagesDir, filePath);
+  const parts = relative.split(path.sep);
+  // Encode each path segment (e.g. 峮峮 → %E5%B3%AE%E5%B3%AE)
+  const encoded = parts.map(encodeURIComponent).join("/");
+  return `${BASE_URL}/${encoded}`;
 }
 
 function titleFromFilename(filename, index) {
@@ -93,7 +98,7 @@ const photos = files.map((filePath, index) => {
   const stats = fs.statSync(filePath);
   const category = categoryFromPath(filePath);
   const title = titleFromFilename(filePath, index);
-  const image = webPath(filePath);
+  const image = cloudinaryUrl(filePath);
 
   return {
     image,
