@@ -9,11 +9,17 @@ cloudinary.config({
   api_secret: 'gXFsC5DwNXlq6gcCujZOmbiXBOE'
 });
 
-const SOURCE_DIR = 'D:\\Photo\\20260606_台中洲際_PassionSister_Compressed\\BEST_KEEPER';
-const CLOUDINARY_FOLDER = '20260606_台中洲際_PassionSister';
-const CONCURRENCY = 10;       // 同時 upload 幾多張
+const SOURCE_DIR = process.argv[2];
+const CLOUDINARY_FOLDER = process.argv[3];
+const CONCURRENCY = 10;
 const LOG_FILE = 'upload-log.json';
 const SKIP_EXISTING = true;   // 如果 log 記錄過就 skip，方便 resume
+
+if (!SOURCE_DIR || !CLOUDINARY_FOLDER) {
+  console.error('Usage: node upload-to-cloudinary.js <source_dir> <cloudinary_folder>');
+  console.error('Example: node upload-to-cloudinary.js "D:\\Photo\\xxx\\BEST_KEEPER" "my-folder-name"');
+  process.exit(1);
+}
 
 // ─── Helpers ──────────────────────────────────────────────
 
