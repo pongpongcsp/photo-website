@@ -10,31 +10,40 @@ cloudinary.config({
 });
 
 const outputFile = path.join(__dirname, "photos-data.js");
-const MAX_PER_PAGE = 500;
 
-// ─── Fetch all images from Cloudinary with pagination ─────
-async function fetchAllResources() {
+// All folders in the order we want them to appear in the website
+// IMPORTANT: These are Cloudinary Media Library Asset Folder names, not public_id prefixes
+// All folders with full Media Library folder paths
+const FOLDERS = [
+  "20250809_台北南港_TRE",
+  "20250810_台北大巨蛋_樂天女孩",
+  "20250824_電腦節_樂天女孩",
+  "20250928_桃園_樂天女孩",
+  "20260328_台北大巨蛋_樂天女孩",
+  "20260329_台北大巨蛋_樂天女孩",
+  "20260606_台中洲際_PassionSister",
+  "20260607_台北南港_金佳垠",
+  "20260607_台北大巨蛋_UniGirls",
+  "峮峮"
+];
+
+// ─── Rate-limit-aware helper ─────────────────────────────
+async function fetchAllFromFolder(folder) {
   let resources = [];
-  let nextCursor = null;
-
+  let cursor = null;
   do {
-    const params = {
-      type: "upload",
-      resource_type: "image",
-      max_results: MAX_PER_PAGE
-    };
-    if (nextCursor) params.next_cursor = nextCursor;
-
-    const result = await cloudinary.api.resources(params);
-    resources = resources.concat(result.resources);
-    nextCursor = result.next_cursor;
-    console.log(`  Fetched ${result.resources.length} images (total: ${resources.length})`);
-  } while (nextCursor);
-
+    const params = { max_results: 500 };
+    if (cursor) params.next_cursor = cursor;
+    const res = await cloudinary.api.resources_by_asset_folder(folder, params);
+    resources = resources.concat(res.resources);
+    cursor = res.next_cursor;
+    // Be nice to rate limits
+    if (cursor) await new Promise(r => setTimeout(r, 250));
+  } while (cursor);
   return resources;
 }
 
-// ─── Build photo entries ──────────────────────────────────
+// ─── Build photo entries ──────────────────────────────────────
 function titleFromPublicId(publicId) {
   const base = path.basename(publicId);
   const cleaned = base
@@ -43,72 +52,63 @@ function titleFromPublicId(publicId) {
     .trim();
   // If the cleaned name looks like a serial number, generate a friendly title
   if (/^\d+ [a-z0-9]+ [a-z]$/i.test(cleaned) || /^\d+\s/.test(cleaned)) {
-    return false; // will be replaced with numbered title
+    return false;
   }
   return cleaned;
 }
 
-function categoryFromPublicId(publicId) {
-  const parts = publicId.split("/");
-  return parts.length > 1 ? parts[0] : "Uncategorized";
-}
+async function buildPhotos() {
+  let allPhotos = [];
 
-function buildPhotos(resources) {
-  // Sort by public_id (folder/filename) for consistent ordering
-  // Exclude photos not in a named folder (e.g. Cloudinary default samples)
-  resources = resources.filter(r => {
-    const parts = r.public_id.split("/");
-    return parts.length > 1;
-  });
-  resources.sort((a, b) => a.public_id.localeCompare(b.public_id));
+  for (const folder of FOLDERS) {
+    process.stdout.write(`☁️  Fetching folder "${folder}"... `);
+    try {
+      const resources = await fetchAllFromFolder(folder);
+      console.log(`✅ ${resources.length} assets`);
 
-  // First pass: count per category for numbered titles
-  const categoryCount = {};
-  resources.forEach(r => {
-    const cat = categoryFromPublicId(r.public_id);
-    categoryCount[cat] = (categoryCount[cat] || 0) + 1;
-  });
+      // Count for numbered titles within this folder
+      let index = 0;
+      for (const r of resources) {
+        index++;
+        // Use the folder name as the category
+        const cat = folder;
+        const rawTitle = titleFromPublicId(r.public_id);
+        const title = rawTitle || `Photo ${String(index).padStart(2, "0")}`;
+        const year = r.created_at ? r.created_at.substring(0, 4) : "2025";
+        const ratio = (r.width && r.height) ? `${r.width} / ${r.height}` : "4 / 5";
 
-  const categoryIndex = {};
-  for (const cat of Object.keys(categoryCount)) {
-    categoryIndex[cat] = 0;
+        allPhotos.push({
+          image: r.secure_url,
+          title,
+          location: "Add location",
+          year,
+          category: cat,
+          featured: false,
+          ratio,
+          alt: `${title} - ${cat} photograph.`
+        });
+      }
+    } catch (err) {
+      console.log(`❌ Error: ${err.message}`);
+    }
   }
 
-  return resources.map((r) => {
-    const cat = categoryFromPublicId(r.public_id);
-    categoryIndex[cat]++;
-
-    const rawTitle = titleFromPublicId(r.public_id);
-    const title = rawTitle || `Photo ${String(categoryIndex[cat]).padStart(2, "0")}`;
-    const year = r.created_at ? r.created_at.substring(0, 4) : "2025";
-    const ratio = (r.width && r.height) ? `${r.width} / ${r.height}` : "4 / 5";
-
-    return {
-      image: r.secure_url,
-      title,
-      location: "Add location",
-      year,
-      category: cat,
-      featured: false, // will set below
-      ratio,
-      alt: `${title} - ${cat} photograph.`
-    };
-  });
+  return allPhotos;
 }
 
-// ─── Main ─────────────────────────────────────────────────
+// ─── Main ───────────────────────────────────────────────────
 async function main() {
-  console.log("☁️  Fetching images from Cloudinary...\n");
+  console.log("☁️  Building photos-data.js from Cloudinary Media Library folders...\n");
+  console.log("📂 Fetching each folder individually via resources_by_asset_folder API\n");
 
-  const resources = await fetchAllResources();
-  console.log(`\n📸 Total images in Cloudinary: ${resources.length}`);
+  const photos = await buildPhotos();
+  console.log(`\n📸 Total photos: ${photos.length}`);
 
-  if (resources.length === 0) {
-    console.log("⚠️  No images found in Cloudinary.");
+  if (photos.length === 0) {
+    console.log("⚠️  No photos found. Rate limit might still be active.");
+    console.log("   Wait a few minutes and try again.");
     return;
   }
-
-  const photos = buildPhotos(resources);
 
   // Mark first 12 as featured
   for (let i = 0; i < Math.min(12, photos.length); i++) {
@@ -118,13 +118,20 @@ async function main() {
   const contents = `window.photos = ${JSON.stringify(photos, null, 2)};\n`;
   fs.writeFileSync(outputFile, contents, "utf8");
 
+  // Count per category
   const categoryNames = [...new Set(photos.map((p) => p.category))];
-  console.log(`\n✅ Generated ${photos.length} photos → photos-data.js`);
-  console.log(`📂 Categories: ${categoryNames.join(", ")}`);
+  const catCounts = {};
+  photos.forEach(p => { catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
+
+  console.log(`✅ Generated ${photos.length} photos → photos-data.js`);
+  console.log(`📂 Categories:`);
+  for (const cat of categoryNames) {
+    console.log(`   ${cat}: ${catCounts[cat]} photos`);
+  }
   console.log(`⭐ Featured: ${Math.min(12, photos.length)} photos`);
 }
 
 main().catch(err => {
-  console.error("💥 Error:", err.message);
+  console.error("💥 Error:", err);
   process.exit(1);
 });
